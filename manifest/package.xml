@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+	<types>
+		<members>CalculateShippingEstimateCtrl</members>
+		<members>CalculateShippingEstimateCtrlTest</members>
+		<members>ShippingEstimateWrapper</members>
+		<members>ShippingProductWrapper</members>
+		<members>ShippingRatingRequestWrapper</members>
+		<name>ApexClass</name>
+	</types>
+	<types>
+		<members>Shipping_Estimate_Configuration__c.Display_Review_Screen__c</members>
+		<members>Shipping_Estimate_Configuration__c.Enable_Shipping_Rate_as_LineItem__c</members>
+		<members>Shipping_Estimate_Configuration__c.Field_Details_w_Json_Format__c</members>
+		<members>Shipping_Estimate_Configuration__c.SObject_Name__c</members>
+		<members>Shipping_Estimate_Configuration__c.Show_Group_By_Shipping_Carrier__c</members>
+		<name>CustomField</name>
+	</types>
+	<types>
+		<members>Shipping_Estimate_Configuration__c</members>
+		<name>CustomObject</name>
+	</types>
+	<types>
+		<members>Shipping_Estimate_Configuration__c</members>
+		<name>CustomTab</name>
+	</types>
+	<types>
+		<members>Shipping_Estimate_Configuration__c-Shipping Estimate Configuration Layout</members>
+		<name>Layout</name>
+	</types>
+	<types>
+		<members>calculateShippingEstimate</members>
+		<members>calculateShippingRates</members>
+		<members>shippingPreferenceForEstimate</members>
+		<name>LightningComponentBundle</name>
+	</types>
+	<version>60.0</version>
+</Package>

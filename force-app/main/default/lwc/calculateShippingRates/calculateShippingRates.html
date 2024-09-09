@@ -1,0 +1,43 @@
+<template>
+    <!-- Loading Spinner -->
+    <div if:true={spinner} class="slds-align--absolute-center">
+        <lightning-spinner alternative-text="Loading..." variant="brand" size="large">
+        </lightning-spinner>
+    </div>
+
+
+    <!-- Accordion for Shipping Rates -->
+    <template if:false={spinner}>
+        <lightning-accordion allow-multiple-sections-open active-section-name={activeSections}>
+            <!-- UPS Section -->
+            <lightning-accordion-section name="upsSection" label="UPS Rates">
+                <template if:true={upsRates}>
+                    <lightning-datatable key-field="id" data={upsRates} columns={columns}
+                        hide-checkbox-column="true" onrowaction={applyShippingRate}
+                        column-widths-mode="auto"></lightning-datatable>
+                </template>
+            </lightning-accordion-section>
+
+            <!-- FedEx Section -->
+            <lightning-accordion-section name="fedexSection" label="FedEx Rates">
+                <template if:true={fedexRates}>
+                    <lightning-datatable key-field="id" data={fedexRates} columns={columns}
+                        hide-checkbox-column="true" onrowaction={applyShippingRate}
+                        column-widths-mode="auto"></lightning-datatable>
+                </template>
+                <template if:true={fedexNotWorking}>
+                    <h1>FEDEX APIS IS NOT WORKING</h1>
+                </template>
+            </lightning-accordion-section>
+
+            <!-- USPS Section -->
+            <lightning-accordion-section name="uspsSection" label="USPS Rates">
+                <template if:true={uspsRates}>
+                    <lightning-datatable key-field="id" data={uspsRates} columns={columns}
+                        hide-checkbox-column="true" onrowaction={applyShippingRate}
+                        column-widths-mode="auto"></lightning-datatable>
+                </template>
+            </lightning-accordion-section>
+        </lightning-accordion>
+    </template>
+</template>

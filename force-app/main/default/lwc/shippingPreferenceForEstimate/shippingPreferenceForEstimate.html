@@ -1,0 +1,236 @@
+<!-- sldsValidatorIgnore -->
+<template>
+    <template if:true={error}>
+        <c-error-Handling error={error}></c-error-Handling>
+    </template>
+    <div if:true={isLoading} class="slds-align--absolute-center">
+        <lightning-spinner alternative-text="Loading..." variant="brand" size="large">
+        </lightning-spinner>
+    </div>
+
+    <template if:false={displayRates}>
+
+        <lightning-quick-action-panel header="Get Estimates">
+            <div class="container" style="max-height:270px">
+
+                <lightning-combobox name="preferanceID" label="Shipping Preference"
+                    value={selectedValuesof.preferanceID} options={preferanceOptions} required="true"
+                    onchange={changeHandler}>
+                </lightning-combobox>
+                <div class="demo-only demo-only--sizing slds-grid slds-wrap">
+                    <div class="slds-size_1-of-2">
+                        <div class="slds-m-right_xx-small">
+                            <lightning-combobox name="serviceProvider" label="Service Provider"
+                                value={selectedValuesof.serviceProvider} placeholder="--None--"
+                                options={serviceProviderOptions} onchange={handleServiceType} required>
+                            </lightning-combobox>
+                        </div>
+                    </div>
+                    <div class="slds-size_1-of-2">
+                        <div class="slds-m-left_xx-small">
+                            <lightning-combobox name="serviceType" label="Service Type"
+                                value={selectedValuesof.serviceType} options={serviceTypeOptions}
+                                onchange={changeHandler} required>
+                            </lightning-combobox>
+                        </div>
+                    </div>
+                    <div class="slds-size_1-of-2">
+                        <div class="slds-m-right_xx-small">
+                            <lightning-combobox name="packagingType" label="Packaging Type"
+                                value={selectedValuesof.packagingType} options={packagingTypeOptions} required="true"
+                                onchange={changeHandler}>
+                            </lightning-combobox>
+                        </div>
+                    </div>
+
+                    <div class="slds-size_1-of-2">
+                        <div class="slds-m-left_xx-small">
+                            <lightning-combobox name="machinable" label="Machinable" value={selectedValuesof.machinable}
+                                options={machinableOptions} onchange={changeHandler} required>
+                            </lightning-combobox>
+                        </div>
+                    </div>
+                    <div class="slds-size_1-of-2">
+                        <div class="slds-m-right_xx-small">
+                            <lightning-input type="date" label="Shipping Date" name="shippingDate"
+                                onchange={changeHandler} value={selectedValuesof.shippingDate} required>
+                            </lightning-input>
+                        </div>
+                    </div>
+                    <template if:true={isFreight}>
+                        <div class="slds-size_2-of-2">
+                            Accessorials (Application to Freight Only)
+                        </div>
+
+                        <div class="slds-size_2-of-2">
+                            <lightning-dual-listbox size="2" name="accessorials" source-label="Availabe Accessorials"
+                                selected-label="Selected" value={selectedValuesof.accessorials} placeholder="--None--"
+                                options={accessorialOptions} onchange={handleAccessorialChange}>
+                            </lightning-dual-listbox>
+                        </div>
+                    </template>
+                </div>
+
+                <div>
+                    <lightning-accordion allow-multiple-sections-open active-section-name="recipient">
+                        <lightning-accordion-section name="recipient" label='Receipient Information'
+                            style="background-color: #f2f2f295;margin-top: 20px;">
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input type="text" label="Name" required
+                                        value={selectedValuesof.recipientAddress.contactPersonName}
+                                        name="recipientAddress.contactPersonName"
+                                        onchange={changeHandler}></lightning-input>
+                                    <lightning-input type="text" label="Phone" required
+                                        value={selectedValuesof.recipientAddress.phoneNumber}
+                                        name="recipientAddress.phoneNumber" onchange={changeHandler}></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input type="text" label="Company"
+                                        value={selectedValuesof.recipientAddress.companyName}
+                                        class="slds-m-left_x-small" name="recipientAddress.companyName"
+                                        onchange={changeHandler}></lightning-input>
+                                </div>
+                            </div>
+                            <div class="slds-grid slds-wrap">
+                                <!-- <div class="slds-col slds-size_1-of-1">
+                                    <c-search-address address-wrapper={selectedValuesof.recipientAddress} onload={hideAddressFields}></c-search-address>
+                                </div> -->
+                                
+
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input type="text" label="Street"
+                                        value={selectedValuesof.recipientAddress.streetLine} required
+                                        onchange={changeHandler} name="recipientAddress.streetLine"></lightning-input>
+                                    <lightning-input type="text" label="State(State Code)"
+                                        value={selectedValuesof.recipientAddress.state} required
+                                        onchange={changeHandler} name="recipientAddress.state"></lightning-input>
+                                    <lightning-input type="text" label="Country(ISO Code)"
+                                        value={selectedValuesof.recipientAddress.country} required
+                                        onchange={changeHandler} name="recipientAddress.country"></lightning-input>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input type="text" label="City"
+                                        value={selectedValuesof.recipientAddress.city} class="slds-m-left_x-small"
+                                        required onchange={changeHandler}
+                                        name="recipientAddress.city"></lightning-input>
+                                    <lightning-input type="text" label="Postal Code"
+                                        value={selectedValuesof.recipientAddress.postalCode} class="slds-m-left_x-small"
+                                        required onchange={changeHandler}
+                                        name="recipientAddress.postalCode"></lightning-input>
+                                    <lightning-input type="checkbox" label="Is It Residential Address?"
+                                        checked={selectedValuesof.recipientAddress.isItResidentialAddress}
+                                        class="slds-m-left_x-small slds-m-top_large" name="ckeckbox"
+                                        onchange={changeHandler}></lightning-input>
+                                </div>
+                            </div>
+                        </lightning-accordion-section>
+                    </lightning-accordion>
+                </div>
+
+                <br />
+                <table class="slds-table slds-table_bordered  slds-table_cell-buffer" role="grid"
+                    aria-labelledby="element-with-table-label other-element-with-table-label">
+                    <thead>
+                        <tr class="slds-grid slds-wrap">
+                            <th class="slds-col slds-size_1-of-12">SR#</th>
+                            <th class="slds-col slds-size_3-of-12">PRODUCT</th>
+                            <th class="slds-col slds-size_1-of-12">QUANTITY*</th>
+                            <th class="slds-col slds-size_1-of-12"> WEIGHT*</th>
+                            <th class="slds-col slds-size_1-of-12">DECLARED VALUE</th>
+                            <th class="slds-col slds-size_3-of-12 slds-truncate">DIMENSIONS (LENGTH X WIDTH X HEIGHT)
+                            </th>
+                            <th class="slds-col slds-size_2-of-12">Signature Option</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template if:true={productFields}>
+                            <template for:each={productFields} for:item="rec">
+                                <tr key={rec.id} class="slds-hint-parent slds-grid slds-wrap">
+                                    <td style="font-weight: bold" class="slds-col slds-size_1-of-12">
+                                        <lightning-formatted-number value={rec.index}></lightning-formatted-number>.
+                                    </td>
+                                    <td class="slds-form-element slds-size--3-of-12 slds-truncate" role="gridcell"
+                                        aria-labelledby="column-group-header">
+                                        <a href={rec.href}>{rec.productName}</a>
+                                    </td>
+
+                                    <td class="slds-col slds-size_1-of-12">
+                                        <lightning-input type="text" variant="label-hidden" label="" data-id={rec.index}
+                                            name="quantity" value={rec.quantity} onchange={handleInputChange}
+                                            pattern="^[1-9][0-9]*$"
+                                            message-when-pattern-mismatch="Please enter a valid quantity"
+                                            required></lightning-input>
+                                    </td>
+
+                                    <td class="slds-col slds-size_1-of-12">
+                                        <lightning-input type="text" variant="label-hidden" label="" data-id={rec.index}
+                                            name="weight" value={rec.weight} onchange={handleInputChange}
+                                            pattern="[0-9]*" required></lightning-input>
+                                    </td>
+
+                                    <td class="slds-col slds-size_1-of-12">
+                                        <lightning-input type="text" variant="label-hidden" label="" data-id={rec.index}
+                                            name="insuredValue" value={rec.insuredValue} onchange={handleInputChange}
+                                            pattern="[0-9]*"></lightning-input>
+                                    </td>
+
+                                    <td class="slds-col slds-size_1-of-12">
+                                        <lightning-input type="text" variant="label-hidden" label="" data-id={rec.index}
+                                            name="dimensionsLength" value={rec.dimensionsLength}
+                                            onchange={handleInputChange} pattern="[0-9]*"></lightning-input>
+                                    </td>
+
+                                    <td class="slds-col slds-size_1-of-12">
+                                        <lightning-input type="text" variant="label-hidden" label="" data-id={rec.index}
+                                            name="dimensionsWidth" value={rec.dimensionsWidth}
+                                            onchange={handleInputChange} pattern="[0-9]*"></lightning-input>
+                                    </td>
+
+                                    <td class="slds-col slds-size_1-of-12">
+                                        <lightning-input type="text" variant="label-hidden" label="" data-id={rec.index}
+                                            name="dimensionsHeight" value={rec.dimensionsHeight}
+                                            onchange={handleInputChange} pattern="[0-9]*"></lightning-input>
+
+                                    </td>
+                                    <td class="slds-col slds-size_1-of-12">
+                                        <lightning-combobox name={rec.index} variant="label-hidden"
+                                            value={rec.signatureOption} options={signatureOptions}
+                                            onchange={handleSignatureChange}>
+                                        </lightning-combobox>
+                                    </td>
+                                    <td class="slds-col slds-size_1-of-12">
+                                        <lightning-button-icon icon-name="utility:delete" alternative-text="Remove"
+                                            title="Remove" name={rec.index} onclick={removeRow}></lightning-button-icon>
+                                    </td>
+                                </tr>
+                            </template>
+                        </template>
+                    </tbody>
+                </table>
+                <div class="slds-p-left_small slds-p-vertical_small">
+                    <lightning-button variant="neutral" label="Add Row" title="add additional row"
+                        icon-name="utility:add" onclick={addNewRow}></lightning-button>
+                </div>
+
+
+            </div>
+
+            <div slot="footer">
+                <lightning-button onclick={closeModal} label="Cancel"></lightning-button>
+                <lightning-button label="Get Shipping Rates" onclick={calculateRate}> </lightning-button>
+            </div>
+        </lightning-quick-action-panel>
+
+    </template>
+
+
+    <template if:true={displayRates}>
+        <lightning-quick-action-panel header="Create Shipping Labels">
+            <lightning-datatable key-field="index" data={rateList} columns={columns} hide-checkbox-column
+                show-row-number-column onrowaction={applyShippingRate}>
+            </lightning-datatable>
+        </lightning-quick-action-panel>
+    </template>
+</template>

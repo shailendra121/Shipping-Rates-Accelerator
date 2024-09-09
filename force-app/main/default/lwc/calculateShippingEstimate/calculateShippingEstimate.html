@@ -1,0 +1,28 @@
+<!-- sldsValidatorIgnore -->
+<template>
+    <template if:true={error}>
+        <c-error-Handling error={error}></c-error-Handling>
+    </template>
+    <div if:true={isLoading} class="slds-align--absolute-center">
+        <lightning-spinner alternative-text="Loading..." variant="brand" size="large">
+        </lightning-spinner>
+    </div>
+
+    <template if:true={hasShippingEstimateConfiguration}>
+        <template if:true={showDisplayReviewScreen}>
+            <c-shipping-preference-for-estimate record-id={recordId}
+                preferance-i-d={defaultPreferanceID}
+                preference-data={preferenceData}
+                shipping-estimate-config={shippingEstimateConfig}>
+            </c-shipping-preference-for-estimate>
+        </template>
+    
+        <template if:false={showDisplayReviewScreen}>
+            <c-calculate-shipping-rates record-id={recordId}
+                                        preferance-id={defaultPreferanceID}
+                                        shipping-estimate-config-wrapper={shippingEstimateConfig}>
+            </c-calculate-shipping-rates>
+        </template>
+    </template>
+    
+</template>
