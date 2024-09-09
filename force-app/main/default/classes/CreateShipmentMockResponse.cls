@@ -1,0 +1,11 @@
+@isTest
+global class CreateShipmentMockResponse implements HttpCalloutMock {
+    global HTTPResponse respond(HTTPRequest req) {
+        
+        HttpResponse res = new HttpResponse();
+        res.setHeader('Content-Type', 'application/json');
+        res.setBody('test123453332');
+        res.setStatusCode(200);
+        return res;
+    }
+}

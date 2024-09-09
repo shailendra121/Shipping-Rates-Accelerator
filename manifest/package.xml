@@ -2,6 +2,7 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
 		<members>CalculateShippingEstimateCtrl</members>
+		<members>CreateShipmentMockResponse</members>
 		<members>CalculateShippingEstimateCtrlTest</members>
 		<members>ShippingEstimateWrapper</members>
 		<members>ShippingProductWrapper</members>
@@ -32,6 +33,7 @@
 		<members>calculateShippingEstimate</members>
 		<members>calculateShippingRates</members>
 		<members>shippingPreferenceForEstimate</members>
+		<members>errorHandling</members>
 		<name>LightningComponentBundle</name>
 	</types>
 	<version>60.0</version>

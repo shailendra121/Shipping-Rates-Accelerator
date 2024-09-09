@@ -1,0 +1,10 @@
+.DS_Store
+.project
+.salesforce
+.settings
+node_modules
+.idea
+.history
+.sf/
+.sfdx/
+force-app/main/default/profiles/Admin.profile-meta.xml

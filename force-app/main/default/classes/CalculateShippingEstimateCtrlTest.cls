@@ -32,7 +32,6 @@ public class CalculateShippingEstimateCtrlTest {
         oppt.StageName = 'Rady to quote';
         oppt.Amount = 3000;
         oppt.CloseDate = System.today() +30 ;
-        oppt.Shipping_Phone__c = '9460000000';
         insert oppt;
 
         Quote quoteRec = new Quote(OpportunityId = oppt.Id, Name = 'Test Quote', Pricebook2Id = Test.getStandardPricebookId(), Status = 'Review Pending');
