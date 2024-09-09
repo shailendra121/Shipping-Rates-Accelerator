@@ -2,8 +2,8 @@
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
 	<types>
 		<members>CalculateShippingEstimateCtrl</members>
-		<members>CreateShipmentMockResponse</members>
 		<members>CalculateShippingEstimateCtrlTest</members>
+		<members>CreateShipmentMockResponse</members>
 		<members>ShippingEstimateWrapper</members>
 		<members>ShippingProductWrapper</members>
 		<members>ShippingRatingRequestWrapper</members>
@@ -32,9 +32,13 @@
 	<types>
 		<members>calculateShippingEstimate</members>
 		<members>calculateShippingRates</members>
-		<members>shippingPreferenceForEstimate</members>
 		<members>errorHandling</members>
+		<members>shippingPreferenceForEstimate</members>
 		<name>LightningComponentBundle</name>
+	</types>
+	<types>
+		<members>Shipping_Rates_Manager</members>
+		<name>PermissionSet</name>
 	</types>
 	<version>60.0</version>
 </Package>
