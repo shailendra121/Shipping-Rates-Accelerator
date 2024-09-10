@@ -27,10 +27,26 @@ public with sharing class ShippingProductWrapper {
     if(!prodFieldMapping.isEmpty()) {
       this.productId = (ID)product.get(prodFieldMapping.get('RecordId'));
       this.productName = (String)product.get(prodFieldMapping.get('ProductName'));
-      this.productGrossWeight = (Decimal)product.get(prodFieldMapping.get('ProductWeight'));
-      this.productLength = (Decimal)product.get(prodFieldMapping.get('ProductLength'));
-      this.productWidth = (Decimal)product.get(prodFieldMapping.get('ProductWidth'));
-      this.productHeight = (Decimal)product.get(prodFieldMapping.get('ProductHeight'));
+      if(prodFieldMapping.containsKey('ProductWeight')) {
+        this.productGrossWeight = (Decimal)product.get(prodFieldMapping.get('ProductWeight'));
+      }else {
+        this.productGrossWeight = 1;
+      }
+      if(prodFieldMapping.containsKey('ProductLength')) {
+        this.productLength = (Decimal)product.get(prodFieldMapping.get('ProductLength'));
+      }else {
+        this.productLength = 1;
+      }
+      if(prodFieldMapping.containsKey('ProductWidth')) {
+        this.productWidth = (Decimal)product.get(prodFieldMapping.get('ProductWidth'));
+      }else {
+        this.productWidth = 1;
+      }
+      if(prodFieldMapping.containsKey('ProductHeight')) {
+        this.productHeight = (Decimal)product.get(prodFieldMapping.get('ProductHeight'));
+      }else {
+        this.productHeight = 1;
+      }
     }
   }
 }

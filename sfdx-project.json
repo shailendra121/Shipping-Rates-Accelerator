@@ -2,19 +2,16 @@
   "packageDirectories": [
     {
       "path": "force-app",
-      "default": true,
-      "package": "shippingRates",
-      "versionName": "ver 0.1",
-      "versionNumber": "0.1.0.NEXT",
-      "versionDescription": ""
-    },
-    {
-      "path": "force-app",
       "package": "AstonousShippingRates",
       "versionName": "ver 0.1",
       "versionNumber": "0.1.0.NEXT",
-      "default": false,
-      "versionDescription": ""
+      "default": true,
+      "versionDescription": "",
+      "dependencies": [
+        {
+          "package": "04t5w000005mU7I"
+        }
+      ]
     }
   ],
   "name": "shippingRates",
@@ -22,7 +19,7 @@
   "sfdcLoginUrl": "https://login.salesforce.com",
   "sourceApiVersion": "61.0",
   "packageAliases": {
-    "shippingRates": "0HoUM00000005fd0AA",
-    "AstonousShippingRates": "0HoUM00000005hF0AQ"
+    "AstonousShippingRates": "0HoUM00000005hF0AQ",
+    "AstonousShippingRates@0.1.0-1": "04tUM0000001QbZYAU"
   }
 }

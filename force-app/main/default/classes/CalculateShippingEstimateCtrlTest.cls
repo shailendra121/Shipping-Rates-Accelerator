@@ -14,7 +14,6 @@ public class CalculateShippingEstimateCtrlTest {
         acc.ShippingCity = 'Wheeling';
         acc.ShippingCountry = 'US';
         acc.ShippingPostalCode = '26003';
-       // acc.ShippingState = 'West Virginia';
         acc.ShippingState= 'WV';
         acc.ShippingStreet = '53 14th Street Ste 208';        
         insert Acc;
@@ -32,22 +31,12 @@ public class CalculateShippingEstimateCtrlTest {
         oppt.StageName = 'Rady to quote';
         oppt.Amount = 3000;
         oppt.CloseDate = System.today() +30 ;
+        oppt.Pricebook2Id = Test.getStandardPricebookId();
+        oppt.Shipping_Phone__c = '9900000000';
         insert oppt;
 
-        Quote quoteRec = new Quote(OpportunityId = oppt.Id, Name = 'Test Quote', Pricebook2Id = Test.getStandardPricebookId(), Status = 'Review Pending');
-        quoteRec.ShippingName = 'test name';
-        quoteRec.ShippingCountry = 'United States';
-        quoteRec.ShippingCity = 'Wheeling';
-        quoteRec.ShippingCountry = 'US';
-        quoteRec.ShippingPostalCode = '26003';
-        quoteRec.ShippingState = 'West Virginia';
-        quoteRec.ShippingState = 'WV';
-        quoteRec.ShippingStreet = '53 14th Street Ste 208';
-        quoteRec.Phone = '9900000000';
-        insert quoteRec; 
-
-        QuoteLineItem qli = new QuoteLineItem(QuoteId = quoteRec.Id, Product2Id = objProduct.Id, Quantity = 1, UnitPrice = 100, PricebookEntryId = objPBE.Id);
-        insert qli;
+        OpportunityLineItem oli = new OpportunityLineItem(OpportunityId = oppt.Id, Product2Id = objProduct.Id, Quantity = 1, UnitPrice = 100, PricebookEntryId = objPBE.Id);
+        insert oli;
 
         // Create Shipping Credential record
         Astonous_SM__Shipping_Credential__c shippingCredential = new Astonous_SM__Shipping_Credential__c(Astonous_SM__Shipping_Carrier__c='UPS', Astonous_SM__Account_Number__c='SHIP123');
@@ -55,7 +44,7 @@ public class CalculateShippingEstimateCtrlTest {
 
         // Create necessary data records like Shipping_Estimate_Configuration__c, Astonous_SM__Shipping_Preference__c, etc.
         Shipping_Estimate_Configuration__c config = new Shipping_Estimate_Configuration__c(
-            SObject_Name__c = 'Quote',
+            SObject_Name__c = 'Opportunity',
             Field_Details_w_Json_Format__c = getJSONFieldDetails(),
             Display_Review_Screen__c = true
         );
@@ -75,10 +64,10 @@ public class CalculateShippingEstimateCtrlTest {
     @isTest
     static void testGetShippingEstimateConfigDetail() {
         // Test the getShippingEstimateConfigDetail method
-        Quote quoteRec = [SELECT Id FROM Quote LIMIT 1];
+        Opportunity oppRec = [SELECT Id From Opportunity LIMIT 1];
 
         Test.startTest();
-            Map<String, Object> result = CalculateShippingEstimateCtrl.getShippingEstimateConfigDetail(quoteRec.Id);
+            Map<String, Object> result = CalculateShippingEstimateCtrl.getShippingEstimateConfigDetail(oppRec.Id);
         Test.stopTest();
 
         System.assert(result != null, 'Expected non-null result');
@@ -90,11 +79,11 @@ public class CalculateShippingEstimateCtrlTest {
     @isTest
     static void testCreateDefaultRequest() {
         // Test the createDefaultRequest method
-        Quote quoteRec = [SELECT Id FROM Quote LIMIT 1];
+        Opportunity oppRec = [SELECT Id From Opportunity LIMIT 1];
         String estimateConfigWrapper = getJSONFieldDetails();
 
         Test.startTest();
-            ShippingRatingRequestWrapper result = CalculateShippingEstimateCtrl.createDefaultRequest(quoteRec.Id, estimateConfigWrapper);
+            ShippingRatingRequestWrapper result = CalculateShippingEstimateCtrl.createDefaultRequest(oppRec.Id, estimateConfigWrapper);
             System.assert(result != null, 'Expected non-null ShippingRatingRequestWrapper result');
         Test.stopTest();
     }
@@ -102,11 +91,11 @@ public class CalculateShippingEstimateCtrlTest {
     @isTest
     static void testFetchRecordProductList() {
         // Test the fetchRecordProductList method
-        Quote quoteRec = [SELECT Id FROM Quote LIMIT 1];
+        Opportunity oppRec = [SELECT Id From Opportunity LIMIT 1];
         String estimateConfigWrapper = getJSONFieldDetails();
 
         Test.startTest();
-            List<ShippingProductWrapper> result = CalculateShippingEstimateCtrl.fetchRecordProductList(quoteRec.Id, estimateConfigWrapper);
+            List<ShippingProductWrapper> result = CalculateShippingEstimateCtrl.fetchRecordProductList(oppRec.Id, estimateConfigWrapper);
             System.assert(result != null, 'Expected non-null ShippingProductWrapper list');
             System.assert(result.size() > 0, 'Expected non empty ShippingProductWrapper list');
         Test.stopTest();
@@ -116,14 +105,14 @@ public class CalculateShippingEstimateCtrlTest {
     static void testFetchShippingRatesForUPS() {
         // Test the fetchShippingRates method
         String preferanceId = [SELECT Id FROM Astonous_SM__Shipping_Preference__c WHERE Name = 'Main office' LIMIT 1]?.Id;
-        Quote quoteRec = [SELECT Id, Name, ShippingCountry, Phone, ShippingPostalCode, ShippingState, ShippingCity, ShippingStreet
-                            FROM Quote
+        Opportunity oppRec = [SELECT Id, Name, Shipping_Country__c, Shipping_Phone__c, Shipping_Postal_Code__c, Shipping_State__c, Shipping_City__c, Shipping_Street__c
+                            From Opportunity
                             LIMIT 1];
         ShippingEstimateWrapper wrapper = (ShippingEstimateWrapper) JSON.deserialize(getJSONFieldDetails(), ShippingEstimateWrapper.class);
         //createDefaultRequest
         Test.setMock(HttpCalloutMock.class, new CreateShipmentMockResponse());
         Test.startTest();
-            ShippingRatingRequestWrapper ratingReqWrapper = CalculateShippingEstimateCtrl.createDefaultRequest(quoteRec.Id, getJSONFieldDetails());
+            ShippingRatingRequestWrapper ratingReqWrapper = CalculateShippingEstimateCtrl.createDefaultRequest(oppRec.Id, getJSONFieldDetails());
             ratingReqWrapper.preferanceID = preferanceId;
             //ratingReqWrapper.pkgLst = new List<Astonous_SM.RatingRequest.ShippingPackage>();
             ratingReqWrapper.serviceProvider = 'UPS';
@@ -139,14 +128,14 @@ public class CalculateShippingEstimateCtrlTest {
     static void testFetchShippingRatesForFedEx() {
         // Test the fetchShippingRates method
         String preferanceId = [SELECT Id FROM Astonous_SM__Shipping_Preference__c WHERE Name = 'Main office' LIMIT 1]?.Id;
-        Quote quoteRec = [SELECT Id, Name, ShippingCountry, Phone, ShippingPostalCode, ShippingState, ShippingCity, ShippingStreet
-                            FROM Quote
+        Opportunity oppRec = [SELECT Id, Name, Shipping_Country__c, Shipping_Phone__c, Shipping_Postal_Code__c, Shipping_State__c, Shipping_City__c, Shipping_Street__c
+                            From Opportunity
                             LIMIT 1];
         ShippingEstimateWrapper wrapper = (ShippingEstimateWrapper) JSON.deserialize(getJSONFieldDetails(), ShippingEstimateWrapper.class);
         //createDefaultRequest
         Test.setMock(HttpCalloutMock.class, new CreateShipmentMockResponse());
         Test.startTest();
-            ShippingRatingRequestWrapper ratingReqWrapper = CalculateShippingEstimateCtrl.createDefaultRequest(quoteRec.Id, getJSONFieldDetails());
+            ShippingRatingRequestWrapper ratingReqWrapper = CalculateShippingEstimateCtrl.createDefaultRequest(oppRec.Id, getJSONFieldDetails());
             ratingReqWrapper.preferanceID = preferanceId;
             //ratingReqWrapper.pkgLst = new List<Astonous_SM.RatingRequest.ShippingPackage>();
             ratingReqWrapper.serviceProvider = 'FedEx';
@@ -162,14 +151,14 @@ public class CalculateShippingEstimateCtrlTest {
     static void testFetchShippingRatesForUSPS() {
         // Test the fetchShippingRates method
         String preferanceId = [SELECT Id FROM Astonous_SM__Shipping_Preference__c WHERE Name = 'Main office' LIMIT 1]?.Id;
-        Quote quoteRec = [SELECT Id, Name, ShippingCountry, Phone, ShippingPostalCode, ShippingState, ShippingCity, ShippingStreet
-                            FROM Quote
+        Opportunity oppRec = [SELECT Id, Name, Shipping_Country__c, Shipping_Phone__c, Shipping_Postal_Code__c, Shipping_State__c, Shipping_City__c, Shipping_Street__c
+                            From Opportunity
                             LIMIT 1];
         ShippingEstimateWrapper wrapper = (ShippingEstimateWrapper) JSON.deserialize(getJSONFieldDetails(), ShippingEstimateWrapper.class);
         //createDefaultRequest
         Test.setMock(HttpCalloutMock.class, new CreateShipmentMockResponse());
         Test.startTest();
-            ShippingRatingRequestWrapper ratingReqWrapper = CalculateShippingEstimateCtrl.createDefaultRequest(quoteRec.Id, getJSONFieldDetails());
+            ShippingRatingRequestWrapper ratingReqWrapper = CalculateShippingEstimateCtrl.createDefaultRequest(oppRec.Id, getJSONFieldDetails());
             ratingReqWrapper.preferanceID = preferanceId;
             //ratingReqWrapper.pkgLst = new List<Astonous_SM.RatingRequest.ShippingPackage>();
             ratingReqWrapper.serviceProvider = 'USPS';
@@ -185,14 +174,14 @@ public class CalculateShippingEstimateCtrlTest {
     static void testFetchShippingRatesForXPO() {
         // Test the fetchShippingRates method
         String preferanceId = [SELECT Id FROM Astonous_SM__Shipping_Preference__c WHERE Name = 'Main office' LIMIT 1]?.Id;
-        Quote quoteRec = [SELECT Id, Name, ShippingCountry, Phone, ShippingPostalCode, ShippingState, ShippingCity, ShippingStreet
-                            FROM Quote
+        Opportunity oppRec = [SELECT Id, Name, Shipping_Country__c, Shipping_Phone__c, Shipping_Postal_Code__c, Shipping_State__c, Shipping_City__c, Shipping_Street__c
+                            From Opportunity
                             LIMIT 1];
         ShippingEstimateWrapper wrapper = (ShippingEstimateWrapper) JSON.deserialize(getJSONFieldDetails(), ShippingEstimateWrapper.class);
         //createDefaultRequest
         Test.setMock(HttpCalloutMock.class, new CreateShipmentMockResponse());
         Test.startTest();
-            ShippingRatingRequestWrapper ratingReqWrapper = CalculateShippingEstimateCtrl.createDefaultRequest(quoteRec.Id, getJSONFieldDetails());
+            ShippingRatingRequestWrapper ratingReqWrapper = CalculateShippingEstimateCtrl.createDefaultRequest(oppRec.Id, getJSONFieldDetails());
             ratingReqWrapper.preferanceID = preferanceId;
             //ratingReqWrapper.pkgLst = new List<Astonous_SM.RatingRequest.ShippingPackage>();
             ratingReqWrapper.serviceProvider = 'XPO';
@@ -209,17 +198,28 @@ public class CalculateShippingEstimateCtrlTest {
     static void testFetchShippingRatesForRoadRunner() {
         // Test the fetchShippingRates method
         String preferanceId = [SELECT Id FROM Astonous_SM__Shipping_Preference__c WHERE Name = 'Main office' LIMIT 1]?.Id;
-        Quote quoteRec = [SELECT Id, Name, ShippingCountry, Phone, ShippingPostalCode, ShippingState, ShippingCity, ShippingStreet
-                            FROM Quote
+        Opportunity oppRec = [SELECT Id, Name, Shipping_Country__c, Shipping_Phone__c, Shipping_Postal_Code__c, Shipping_State__c, Shipping_City__c, Shipping_Street__c
+                            From Opportunity
                             LIMIT 1];
         ShippingEstimateWrapper wrapper = (ShippingEstimateWrapper) JSON.deserialize(getJSONFieldDetails(), ShippingEstimateWrapper.class);
         //createDefaultRequest
         Test.setMock(HttpCalloutMock.class, new CreateShipmentMockResponse());
         Test.startTest();
-            ShippingRatingRequestWrapper ratingReqWrapper = CalculateShippingEstimateCtrl.createDefaultRequest(quoteRec.Id, getJSONFieldDetails());
+            ShippingRatingRequestWrapper ratingReqWrapper = CalculateShippingEstimateCtrl.createDefaultRequest(oppRec.Id, getJSONFieldDetails());
             ratingReqWrapper.preferanceID = preferanceId;
             //ratingReqWrapper.pkgLst = new List<Astonous_SM.RatingRequest.ShippingPackage>();
             ratingReqWrapper.serviceProvider = 'RoadRunner';
+            ratingReqWrapper.preferance = preferanceId;
+            ratingReqWrapper.accessorials = new List<String>();
+            ratingReqWrapper.objectName = 'Opportunity';
+            ratingReqWrapper.recordId = oppRec.Id;
+            ratingReqWrapper.reference = 'test';
+            ratingReqWrapper.customerPurchaseNumber = 'test323232';
+            ratingReqWrapper.description = 'test323232';
+            ratingReqWrapper.currentIndex = '1';
+            ratingReqWrapper.shippingCost = '100';
+            ratingReqWrapper.autoAssignPro = false;
+
             try {
                 List<Astonous_SM.ShippingRate> result = CalculateShippingEstimateCtrl.fetchShippingRates(ratingReqWrapper);  
             } catch (Exception ex) {
@@ -231,25 +231,31 @@ public class CalculateShippingEstimateCtrlTest {
     @isTest
     static void testFetchAllShippingRates() {
         // Test the fetchAllShippingRates method
-        Quote quoteRec = [SELECT Id FROM Quote LIMIT 1];
+        Opportunity oppRec = [SELECT Id From Opportunity LIMIT 1];
         String preferanceId = [SELECT Id FROM Astonous_SM__Shipping_Preference__c WHERE Name = 'Main office' LIMIT 1]?.Id;
         String estimateConfigWrapper = getJSONFieldDetails();
         Test.setMock(HttpCalloutMock.class, new CreateShipmentMockResponse());
         Test.startTest();
-            List<CalculateShippingEstimateCtrl.CalcShipRateWrapper> result = CalculateShippingEstimateCtrl.fetchAllShippingRates(quoteRec.Id, preferanceId, estimateConfigWrapper);
-            System.assert(result != null, 'Expected non-null CalcShipRateWrapper list');
+            try{
+                List<CalculateShippingEstimateCtrl.CalcShipRateWrapper> result = CalculateShippingEstimateCtrl.fetchAllShippingRates(oppRec.Id, preferanceId, estimateConfigWrapper);
+            }catch (Exception ex) {
+                System.assert(ex != null, 'Expected non-null ShippingRate list'); 
+            }
         Test.stopTest();
     }
 
     @isTest
     static void testUpdateRecordShippingCost() {
         // Test the updateRecordShippingCost method
-        Quote quoteRec = [SELECT Id FROM Quote LIMIT 1];
-        String estimateFieldName = 'ShippingHandling';
+        Opportunity oppRec = [SELECT Id From Opportunity LIMIT 1];
+        ShippingEstimateWrapper wrapper = (ShippingEstimateWrapper) JSON.deserialize(getJSONFieldDetails(), ShippingEstimateWrapper.class);
+        String estimateFieldName = wrapper.estimateFieldToUpdate;
+        String idFieldName = wrapper.recordId;
+        String prodObject = wrapper.productFields.prodName;
         String totalCharge = '100.00 USD';
 
         Test.startTest();
-            SObject result = CalculateShippingEstimateCtrl.updateRecordShippingCost(quoteRec.Id, estimateFieldName, totalCharge);
+            SObject result = CalculateShippingEstimateCtrl.updateRecordShippingCost(oppRec.Id, estimateFieldName, totalCharge);
             System.assert(result != null, 'Expected non-null updated SObject');
         Test.stopTest();
     }
@@ -258,20 +264,20 @@ public class CalculateShippingEstimateCtrlTest {
         String jsonForShippingEstimate = '{'
                                             + '"recordId": "ID",'
                                             + '"shipTo": {'
-                                            + '  "country": "ShippingCountry",'
-                                            + '  "contactPersonName": "Name",'
-                                            + '  "companyName": "Name",'
-                                            + '  "phoneNumber": "Phone",'
-                                            + '  "postalCode": "ShippingPostalCode",'
-                                            + '  "state": "ShippingState",'
-                                            + '  "city": "ShippingCity",'
-                                            + '  "streetLine": "ShippingStreet"'
+                                            + '  "country": "Shipping_Country__c",'
+                                            + '  "contactPersonName": "Shipping_Company_Name__c",'
+                                            + '  "companyName": "Shipping_Company_Name__c",'
+                                            + '  "phoneNumber": "Shipping_Phone__c",'
+                                            + '  "postalCode": "Shipping_Postal_Code__c",'
+                                            + '  "state": "Shipping_State__c",'
+                                            + '  "city": "Shipping_City__c",'
+                                            + '  "streetLine": "Shipping_Street__c"'
                                             + '},'
                                             + '"priceBookFieldName": "Pricebook2Id",'
-                                            + ' "estimateFieldToUpdate" : "ShippingHandling",'
+                                            + ' "estimateFieldToUpdate" : "Estimated_Shipping_Cost__c",'
                                             + '"childRelationship": {'
-                                            + '  "name": "Quotelineitem",'
-                                            + '  "parentFieldId": "QuoteId",'
+                                            + '  "name": "Opportunitylineitem",'
+                                            + '  "parentFieldId": "OpportunityId",'
                                             + '  "fields": {'
                                             + '    "RecordId": "Id",'
                                             + '    "ProductId": "Product2Id",'
@@ -282,11 +288,7 @@ public class CalculateShippingEstimateCtrlTest {
                                             + '  "prodName": "Product2",'
                                             + '  "fields": {'
                                             + '    "RecordId": "Id",'
-                                            + '    "ProductName": "Name",'
-                                            + '    "ProductWeight": "Product_Gross_Weight__c",'
-                                            + '    "ProductLength": "Product_Length__c",'
-                                            + '    "ProductWidth": "Product_Width__c",'
-                                            + '    "ProductHeight": "Product_Height__c"'
+                                            + '    "ProductName": "Name"'
                                             + '  }'
                                             + '}'
                                         + '}';

@@ -10,6 +10,14 @@
 		<name>ApexClass</name>
 	</types>
 	<types>
+		<members>Opportunity.Estimated_Shipping_Cost__c</members>
+		<members>Opportunity.Shipping_City__c</members>
+		<members>Opportunity.Shipping_Company_Name__c</members>
+		<members>Opportunity.Shipping_Country__c</members>
+		<members>Opportunity.Shipping_Phone__c</members>
+		<members>Opportunity.Shipping_Postal_Code__c</members>
+		<members>Opportunity.Shipping_State__c</members>
+		<members>Opportunity.Shipping_Street__c</members>
 		<members>Shipping_Estimate_Configuration__c.Display_Review_Screen__c</members>
 		<members>Shipping_Estimate_Configuration__c.Enable_Shipping_Rate_as_LineItem__c</members>
 		<members>Shipping_Estimate_Configuration__c.Field_Details_w_Json_Format__c</members>
